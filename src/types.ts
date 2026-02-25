@@ -25,6 +25,16 @@ export interface AppData {
   versionApiEndpoint?: string; // Placeholder for future backend integration
 }
 
+export interface AndroidAppData {
+  id: string;
+  name: string;
+  developer: string;
+  category: 'Social Media' | 'Utilities' | 'Productivity' | 'Media & Video' | 'Games';
+  externalUrl: string;
+  icon?: string;
+  description?: string;
+}
+
 export type Category = 
   | "Windows 11"
   | "Windows 10"

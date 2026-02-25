@@ -1,9 +1,12 @@
 import React, { useState, useMemo } from 'react';
 import { apps } from './data/apps';
+import { androidApps } from './data/androidApps';
 import { CategoryGroup } from './components/CategoryGroup';
 import { Clock } from './components/Clock';
+import { Sidebar } from './components/Sidebar';
+import { AndroidAppCard } from './components/AndroidAppCard';
 import { AppData } from './types';
-import { Search, Globe, Download, X, AlertTriangle, CheckSquare, Square, HardDrive, Moon, Sun, FileCode, Languages } from 'lucide-react';
+import { Search, Globe, Download, X, AlertTriangle, CheckSquare, Square, HardDrive, Moon, Sun, FileCode, Languages, Smartphone, Monitor, Menu } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 // UI Translations
@@ -33,6 +36,8 @@ const uiTranslations = {
     addRufus: "إضافة Rufus",
     scriptToastTitle: "تم إنشاء السكربت!",
     scriptToastDesc: "ضع هذا الملف في نفس المجلد مع البرامج المحملة، وشغله كمسؤول (Run as Administrator) للتثبيت التلقائي.",
+    windowsMode: "برامج الكمبيوتر",
+    androidMode: "عالم الأندرويد",
   },
   en: {
     title: "Software Directory",
@@ -59,6 +64,8 @@ const uiTranslations = {
     addRufus: "Add Rufus",
     scriptToastTitle: "Script Generated!",
     scriptToastDesc: "Place this file in the same folder as your downloaded apps, and Run as Administrator to auto-install.",
+    windowsMode: "PC Software",
+    androidMode: "Android World",
   }
 };
 
@@ -69,6 +76,11 @@ export default function App() {
   const [showUsbSuggestion, setShowUsbSuggestion] = useState(false);
   const [showScriptToast, setShowScriptToast] = useState(false);
   
+  // View Mode: 'windows' or 'android'
+  const [viewMode, setViewMode] = useState<'windows' | 'android'>('windows');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [androidCategory, setAndroidCategory] = useState('All');
+
   // Settings
   const [darkMode, setDarkMode] = useState(true);
   const [language, setLanguage] = useState<'ar' | 'en'>('ar');
@@ -430,15 +442,51 @@ export default function App() {
       <header className={`backdrop-blur-md border-b sticky top-0 z-40 shadow-sm transition-all ${darkMode ? 'bg-gray-900/90 border-gray-800' : 'bg-white/90 border-gray-200'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
           <div className="flex items-center space-x-2 flex-shrink-0">
-            <div className="bg-indigo-600 p-1.5 rounded-lg">
-              <Globe className="text-white" size={20} />
+            {/* Mobile Sidebar Toggle (Android Mode Only) */}
+            {viewMode === 'android' && (
+              <button 
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+                className="lg:hidden p-2 -ml-2 text-gray-600 dark:text-gray-300"
+              >
+                <Menu size={24} />
+              </button>
+            )}
+
+            <div className={`p-1.5 rounded-lg ${viewMode === 'android' ? 'bg-green-600' : 'bg-indigo-600'}`}>
+              {viewMode === 'android' ? <Smartphone className="text-white" size={20} /> : <Globe className="text-white" size={20} />}
             </div>
             <h1 className={`text-xl font-bold tracking-tight hidden sm:block mr-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
               {t.title}
             </h1>
           </div>
           
-          <div className="relative w-full max-w-xl">
+          {/* View Mode Switcher (Desktop) */}
+          <div className="hidden md:flex bg-gray-100 dark:bg-gray-800 p-1 rounded-lg">
+            <button
+              onClick={() => setViewMode('windows')}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
+                viewMode === 'windows' 
+                  ? 'bg-white dark:bg-gray-700 text-indigo-600 dark:text-indigo-400 shadow-sm' 
+                  : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
+              }`}
+            >
+              <Monitor size={16} />
+              <span>{t.windowsMode}</span>
+            </button>
+            <button
+              onClick={() => setViewMode('android')}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
+                viewMode === 'android' 
+                  ? 'bg-white dark:bg-gray-700 text-green-600 dark:text-green-400 shadow-sm' 
+                  : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
+              }`}
+            >
+              <Smartphone size={16} />
+              <span>{t.androidMode}</span>
+            </button>
+          </div>
+
+          <div className="relative w-full max-w-xs sm:max-w-md">
             <div className={`absolute inset-y-0 ${language === 'ar' ? 'right-0 pr-3' : 'left-0 pl-3'} flex items-center pointer-events-none`}>
               <Search className="h-4 w-4 text-gray-400" />
             </div>
@@ -474,94 +522,153 @@ export default function App() {
               <span className="text-xs font-bold">{language === 'ar' ? 'EN' : 'عربي'}</span>
             </button>
 
-             <button 
-              onClick={selectAllVisible}
-              className={`hidden md:flex items-center transition-colors px-2 py-1 rounded ${darkMode ? 'text-gray-300 hover:text-indigo-400 hover:bg-gray-800' : 'text-gray-600 hover:text-indigo-600 hover:bg-gray-100'}`}
-              title={t.selectAll}
-            >
-              <CheckSquare size={16} className="mx-1" />
-              <span className="hidden lg:inline">{t.selectAll}</span>
-            </button>
-            <button 
-              onClick={clearSelection}
-              className={`hidden md:flex items-center transition-colors px-2 py-1 rounded ${darkMode ? 'text-gray-300 hover:text-red-400 hover:bg-gray-800' : 'text-gray-600 hover:text-red-600 hover:bg-gray-100'}`}
-              title={t.clear}
-              disabled={selectedAppIds.size === 0}
-            >
-              <Square size={16} className="mx-1" />
-              <span className="hidden lg:inline">{t.clear}</span>
-            </button>
+             {viewMode === 'windows' && (
+               <>
+                 <button 
+                  onClick={selectAllVisible}
+                  className={`hidden md:flex items-center transition-colors px-2 py-1 rounded ${darkMode ? 'text-gray-300 hover:text-indigo-400 hover:bg-gray-800' : 'text-gray-600 hover:text-indigo-600 hover:bg-gray-100'}`}
+                  title={t.selectAll}
+                >
+                  <CheckSquare size={16} className="mx-1" />
+                  <span className="hidden lg:inline">{t.selectAll}</span>
+                </button>
+                <button 
+                  onClick={clearSelection}
+                  className={`hidden md:flex items-center transition-colors px-2 py-1 rounded ${darkMode ? 'text-gray-300 hover:text-red-400 hover:bg-gray-800' : 'text-gray-600 hover:text-red-600 hover:bg-gray-100'}`}
+                  title={t.clear}
+                  disabled={selectedAppIds.size === 0}
+                >
+                  <Square size={16} className="mx-1" />
+                  <span className="hidden lg:inline">{t.clear}</span>
+                </button>
+               </>
+             )}
             
             <div className={`hidden lg:block border-r border-gray-200 px-4 mx-2 ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
               <Clock />
             </div>
           </div>
         </div>
+        
+        {/* Mobile View Mode Switcher */}
+        <div className="md:hidden flex border-t border-gray-200 dark:border-gray-800">
+          <button
+            onClick={() => setViewMode('windows')}
+            className={`flex-1 py-2 text-xs font-medium flex items-center justify-center gap-2 ${
+              viewMode === 'windows' 
+                ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400' 
+                : 'text-gray-500 dark:text-gray-400'
+            }`}
+          >
+            <Monitor size={14} />
+            {t.windowsMode}
+          </button>
+          <button
+            onClick={() => setViewMode('android')}
+            className={`flex-1 py-2 text-xs font-medium flex items-center justify-center gap-2 ${
+              viewMode === 'android' 
+                ? 'bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400' 
+                : 'text-gray-500 dark:text-gray-400'
+            }`}
+          >
+            <Smartphone size={14} />
+            {t.androidMode}
+          </button>
+        </div>
       </header>
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-32">
-        <div className="mb-8 text-center">
-          <h2 className={`text-3xl font-extrabold tracking-tight ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-            {t.selectApps}
-          </h2>
-          <p className={`mt-2 text-lg ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-            {t.selectAppsDesc}
-          </p>
-        </div>
+        {viewMode === 'windows' ? (
+          <>
+            <div className="mb-8 text-center">
+              <h2 className={`text-3xl font-extrabold tracking-tight ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                {t.selectApps}
+              </h2>
+              <p className={`mt-2 text-lg ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                {t.selectAppsDesc}
+              </p>
+            </div>
 
-        {/* Windows Versions Sections with Tabs */}
-        {renderOsSection()}
+            {/* Windows Versions Sections with Tabs */}
+            {renderOsSection()}
 
-        {/* Microsoft Office Section (Full Width) */}
-        {officeCategory && officeCategory.length > 0 && (
-          <div className="mb-8">
-            <CategoryGroup
-              title="Microsoft Office"
-              apps={officeCategory}
-              selectedAppIds={selectedAppIds}
-              onToggle={toggleApp}
-              onDownload={handleAppDownload}
+            {/* Microsoft Office Section (Full Width) */}
+            {officeCategory && officeCategory.length > 0 && (
+              <div className="mb-8">
+                <CategoryGroup
+                  title="Microsoft Office"
+                  apps={officeCategory}
+                  selectedAppIds={selectedAppIds}
+                  onToggle={toggleApp}
+                  onDownload={handleAppDownload}
+                />
+              </div>
+            )}
+
+            {/* Classic Windows Section (Full Width) */}
+            {classicOsCategory && classicOsCategory.length > 0 && (
+              <div className="mb-8">
+                <CategoryGroup
+                  title="Classic Windows"
+                  apps={classicOsCategory}
+                  selectedAppIds={selectedAppIds}
+                  onToggle={toggleApp}
+                  onDownload={handleAppDownload}
+                />
+              </div>
+            )}
+
+            {/* Masonry Grid Layout for other categories */}
+            <div className="columns-1 md:columns-2 lg:columns-3 xl:columns-4 gap-6 space-y-6">
+              {otherCategories.map(([category, categoryApps]) => (
+                <CategoryGroup
+                  key={category}
+                  title={category}
+                  apps={categoryApps}
+                  selectedAppIds={selectedAppIds}
+                  onToggle={toggleApp}
+                  onDownload={handleAppDownload}
+                />
+              ))}
+            </div>
+            
+            {Object.keys(groupedApps).length === 0 && (
+              <div className="text-center py-20">
+                <p className={`text-lg ${darkMode ? 'text-gray-500' : 'text-gray-500'}`}>{t.noResults.replace('{query}', searchQuery)}</p>
+                <button 
+                  onClick={() => setSearchQuery('')}
+                  className="mt-4 text-indigo-600 hover:text-indigo-500 font-medium hover:underline"
+                >
+                  {t.clearSearch}
+                </button>
+              </div>
+            )}
+          </>
+        ) : (
+          <div className="flex gap-6">
+            <Sidebar 
+              isOpen={sidebarOpen} 
+              onClose={() => setSidebarOpen(false)} 
+              activeCategory={androidCategory}
+              onSelectCategory={setAndroidCategory}
+              isRTL={language === 'ar'}
             />
-          </div>
-        )}
-
-        {/* Classic Windows Section (Full Width) */}
-        {classicOsCategory && classicOsCategory.length > 0 && (
-          <div className="mb-8">
-            <CategoryGroup
-              title="Classic Windows"
-              apps={classicOsCategory}
-              selectedAppIds={selectedAppIds}
-              onToggle={toggleApp}
-              onDownload={handleAppDownload}
-            />
-          </div>
-        )}
-
-        {/* Masonry Grid Layout for other categories */}
-        <div className="columns-1 md:columns-2 lg:columns-3 xl:columns-4 gap-6 space-y-6">
-          {otherCategories.map(([category, categoryApps]) => (
-            <CategoryGroup
-              key={category}
-              title={category}
-              apps={categoryApps}
-              selectedAppIds={selectedAppIds}
-              onToggle={toggleApp}
-              onDownload={handleAppDownload}
-            />
-          ))}
-        </div>
-        
-        {Object.keys(groupedApps).length === 0 && (
-          <div className="text-center py-20">
-            <p className={`text-lg ${darkMode ? 'text-gray-500' : 'text-gray-500'}`}>{t.noResults.replace('{query}', searchQuery)}</p>
-            <button 
-              onClick={() => setSearchQuery('')}
-              className="mt-4 text-indigo-600 hover:text-indigo-500 font-medium hover:underline"
-            >
-              {t.clearSearch}
-            </button>
+            
+            <div className="flex-1">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {androidApps
+                  .filter(app => {
+                    const matchesCategory = androidCategory === 'All' || app.category === androidCategory;
+                    const matchesSearch = app.name.toLowerCase().includes(searchQuery.toLowerCase());
+                    return matchesCategory && matchesSearch;
+                  })
+                  .map(app => (
+                    <AndroidAppCard key={app.id} app={app} isRTL={language === 'ar'} />
+                  ))
+                }
+              </div>
+            </div>
           </div>
         )}
       </main>
