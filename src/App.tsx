@@ -1,12 +1,14 @@
-import React, { useState, useMemo } from 'react';
-import { apps } from './data/apps';
-import { androidApps } from './data/androidApps';
+import React, { useState, useMemo, useEffect } from 'react';
+import { apps as initialApps } from './data/apps';
+import { androidApps as initialAndroidApps } from './data/androidApps';
 import { CategoryGroup } from './components/CategoryGroup';
 import { Clock } from './components/Clock';
 import { Sidebar } from './components/Sidebar';
 import { AndroidAppCard } from './components/AndroidAppCard';
-import { AppData } from './types';
-import { Search, Globe, Download, X, AlertTriangle, CheckSquare, Square, HardDrive, Moon, Sun, FileCode, Languages, Smartphone, Monitor, Menu } from 'lucide-react';
+import { AdminLoginModal } from './components/AdminLoginModal';
+import { AdminDashboard } from './components/AdminDashboard';
+import { AppData, AndroidAppData } from './types';
+import { Search, Globe, Download, X, AlertTriangle, CheckSquare, Square, HardDrive, Moon, Sun, FileCode, Languages, Smartphone, Monitor, Menu, Settings } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 // UI Translations
@@ -70,6 +72,17 @@ const uiTranslations = {
 };
 
 export default function App() {
+  // State for Apps (initialized from localStorage if available)
+  const [apps, setApps] = useState<AppData[]>(() => {
+    const saved = localStorage.getItem('pcApps');
+    return saved ? JSON.parse(saved) : initialApps;
+  });
+
+  const [androidAppsList, setAndroidAppsList] = useState<AndroidAppData[]>(() => {
+    const saved = localStorage.getItem('androidApps');
+    return saved ? JSON.parse(saved) : initialAndroidApps;
+  });
+
   const [selectedAppIds, setSelectedAppIds] = useState<Set<string>>(new Set());
   const [searchQuery, setSearchQuery] = useState('');
   const [showPopupWarning, setShowPopupWarning] = useState(false);
@@ -81,13 +94,17 @@ export default function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [androidCategory, setAndroidCategory] = useState('All');
 
+  // Admin State
+  const [showAdminLogin, setShowAdminLogin] = useState(false);
+  const [showAdminDashboard, setShowAdminDashboard] = useState(false);
+
   // Settings
   const [darkMode, setDarkMode] = useState(true);
   const [language, setLanguage] = useState<'ar' | 'en'>('ar');
   const t = uiTranslations[language];
 
   // Apply Dark Mode & Direction
-  React.useEffect(() => {
+  useEffect(() => {
     if (darkMode) {
       document.documentElement.classList.add('dark');
     } else {
@@ -95,25 +112,17 @@ export default function App() {
     }
   }, [darkMode]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr';
   }, [language]);
 
-  // Placeholder for Versioning API
-  /*
-  React.useEffect(() => {
-    const fetchVersions = async () => {
-      try {
-        // const response = await fetch('https://api.example.com/versions');
-        // const data = await response.json();
-        // updateAppsWithVersions(data);
-      } catch (error) {
-        console.error('Failed to fetch versions', error);
-      }
-    };
-    fetchVersions();
-  }, []);
-  */
+  // Save changes from Admin Dashboard
+  const handleAdminSave = (newPcApps: AppData[], newAndroidApps: AndroidAppData[]) => {
+    setApps(newPcApps);
+    setAndroidAppsList(newAndroidApps);
+    localStorage.setItem('pcApps', JSON.stringify(newPcApps));
+    localStorage.setItem('androidApps', JSON.stringify(newAndroidApps));
+  };
 
   // Group apps by category
   const groupedApps = useMemo(() => {
@@ -153,29 +162,35 @@ export default function App() {
 
   const checkAndShowUsbSuggestion = (currentSelection: Set<string>) => {
     // Check if Rufus or Ventoy are already selected
-    const hasRufus = currentSelection.has('rufus');
-    const hasVentoy = currentSelection.has('ventoy');
-
-    if (!hasRufus && !hasVentoy) {
+    const rufus = apps.find(a => a.name.toLowerCase().includes('rufus'));
+    const ventoy = apps.find(a => a.name.toLowerCase().includes('ventoy'));
+    
+    const hasUsbTool = (rufus && currentSelection.has(rufus.id)) || (ventoy && currentSelection.has(ventoy.id));
+    
+    if (!hasUsbTool) {
       setShowUsbSuggestion(true);
-      // Hide after 10 seconds automatically
+      // Auto-hide after 10 seconds
       setTimeout(() => setShowUsbSuggestion(false), 10000);
     }
   };
 
   const addRufus = () => {
-    setSelectedAppIds(prev => {
-      const next = new Set(prev);
-      const rufusApp = apps.find(a => a.id === 'rufus');
-      if (rufusApp) {
-        next.add(rufusApp.id);
-      }
-      return next;
-    });
-    setShowUsbSuggestion(false);
+    const rufus = apps.find(a => a.name.toLowerCase().includes('rufus'));
+    if (rufus) {
+      setSelectedAppIds(prev => new Set(prev).add(rufus.id));
+      setShowUsbSuggestion(false);
+    }
   };
 
   const handleAppDownload = (app: AppData) => {
+    // Check if it's a Windows OS with multiple languages
+    if (app.downloadUrls) {
+      // Default to English if not specified (though UI forces selection)
+      window.open(app.downloadUrls['en-US'] || Object.values(app.downloadUrls)[0], '_blank');
+    } else {
+      window.open(app.officialDownloadUrl, '_blank');
+    }
+
     if (app.category.startsWith('Windows') || app.category === 'Classic Windows') {
       checkAndShowUsbSuggestion(selectedAppIds);
     }
@@ -351,6 +366,25 @@ export default function App() {
 
   return (
     <div className={`min-h-screen font-sans transition-colors duration-200 ${darkMode ? 'bg-gray-900 text-gray-100' : 'bg-gray-50 text-gray-900'}`} dir={language === 'ar' ? 'rtl' : 'ltr'}>
+      {/* Admin Modals */}
+      <AdminLoginModal 
+        isOpen={showAdminLogin} 
+        onClose={() => setShowAdminLogin(false)}
+        onLogin={() => {
+          setShowAdminLogin(false);
+          setShowAdminDashboard(true);
+        }}
+      />
+      
+      {showAdminDashboard && (
+        <AdminDashboard
+          pcApps={apps}
+          androidApps={androidAppsList}
+          onSave={handleAdminSave}
+          onClose={() => setShowAdminDashboard(false)}
+        />
+      )}
+
       {/* Popup Warning Toast */}
       <AnimatePresence>
         {showPopupWarning && (
@@ -522,6 +556,15 @@ export default function App() {
               <span className="text-xs font-bold">{language === 'ar' ? 'EN' : 'عربي'}</span>
             </button>
 
+            {/* Admin Button */}
+            <button
+              onClick={() => setShowAdminLogin(true)}
+              className={`p-2 rounded-lg transition-colors ${darkMode ? 'text-gray-300 hover:bg-gray-800' : 'text-gray-600 hover:bg-gray-100'}`}
+              title="Admin Settings"
+            >
+              <Settings size={20} />
+            </button>
+
              {viewMode === 'windows' && (
                <>
                  <button 
@@ -657,7 +700,7 @@ export default function App() {
             
             <div className="flex-1">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {androidApps
+                {androidAppsList
                   .filter(app => {
                     const matchesCategory = androidCategory === 'All' || app.category === androidCategory;
                     const matchesSearch = app.name.toLowerCase().includes(searchQuery.toLowerCase());
