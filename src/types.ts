@@ -21,6 +21,8 @@ export interface AppData {
   };
   version?: string;
   sha256?: string;
+  silentArgs?: string; // e.g. "/S" or "/silent"
+  versionApiEndpoint?: string; // Placeholder for future backend integration
 }
 
 export type Category = 

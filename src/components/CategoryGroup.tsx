@@ -50,14 +50,19 @@ export const CategoryGroup: React.FC<CategoryGroupProps> = ({
     <div className={`
       break-inside-avoid p-4 rounded-lg border shadow-sm transition-shadow
       ${(isWindows || isClassic)
-        ? 'bg-blue-50/50 border-blue-100 mb-8 col-span-full shadow-md' 
+        ? 'bg-blue-50/50 dark:bg-blue-900/10 border-blue-100 dark:border-blue-900/30 mb-8 col-span-full shadow-md' 
         : isOffice
-          ? 'bg-orange-50/50 border-orange-100 mb-8 col-span-full shadow-md'
-          : 'bg-white border-gray-100 mb-6 hover:shadow-md'
+          ? 'bg-orange-50/50 dark:bg-orange-900/10 border-orange-100 dark:border-orange-900/30 mb-8 col-span-full shadow-md'
+          : 'bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 mb-6 hover:shadow-md'
       }
     `}>
       <h2 className={`text-lg font-bold mb-3 flex items-center border-b pb-2 
-        ${(isWindows || isClassic) ? 'text-blue-900 border-blue-200' : isOffice ? 'text-orange-900 border-orange-200' : 'text-gray-800 border-gray-100'}`}>
+        ${(isWindows || isClassic) 
+          ? 'text-blue-900 dark:text-blue-300 border-blue-200 dark:border-blue-800' 
+          : isOffice 
+            ? 'text-orange-900 dark:text-orange-300 border-orange-200 dark:border-orange-800' 
+            : 'text-gray-800 dark:text-gray-200 border-gray-100 dark:border-gray-700'
+        }`}>
         <span className={`w-1.5 h-5 rounded-full ml-2 
           ${(isWindows || isClassic) ? 'bg-blue-600' : isOffice ? 'bg-orange-500' : 'bg-indigo-500'}`}></span>
         {displayTitle}

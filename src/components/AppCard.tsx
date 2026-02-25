@@ -61,10 +61,19 @@ export const AppCard: React.FC<AppCardProps> = ({ app, isSelected, onToggle, onD
       className={`
         flex flex-col p-3 rounded cursor-pointer transition-colors duration-150 group relative
         ${isSelected 
-          ? 'bg-indigo-50' 
-          : isWindows ? 'hover:bg-blue-50' : isOffice ? 'hover:bg-orange-50' : 'hover:bg-gray-100'
+          ? 'bg-indigo-50 dark:bg-indigo-900/30' 
+          : isWindows 
+            ? 'hover:bg-blue-50 dark:hover:bg-blue-900/20 bg-white dark:bg-gray-800' 
+            : isOffice 
+              ? 'hover:bg-orange-50 dark:hover:bg-orange-900/20 bg-white dark:bg-gray-800' 
+              : 'hover:bg-gray-100 dark:hover:bg-gray-700 bg-white dark:bg-gray-800'
         }
-        ${isWindows ? 'border border-gray-200 hover:border-blue-300' : isOffice ? 'border border-gray-200 hover:border-orange-300' : ''}
+        ${isWindows 
+          ? 'border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-500' 
+          : isOffice 
+            ? 'border border-gray-200 dark:border-gray-700 hover:border-orange-300 dark:hover:border-orange-500' 
+            : 'border border-gray-200 dark:border-gray-700'
+        }
       `}
     >
       <div className="flex items-center w-full">
@@ -73,29 +82,29 @@ export const AppCard: React.FC<AppCardProps> = ({ app, isSelected, onToggle, onD
           ${isSelected 
             ? 'bg-indigo-600 border-indigo-600' 
             : isWindows 
-              ? 'bg-white border-gray-300 group-hover:border-blue-400' 
+              ? 'bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 group-hover:border-blue-400' 
               : isOffice
-                ? 'bg-white border-gray-300 group-hover:border-orange-400'
-                : 'bg-white border-gray-300 group-hover:border-indigo-400'
+                ? 'bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 group-hover:border-orange-400'
+                : 'bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 group-hover:border-indigo-400'
           }
         `}>
           {isSelected && <Check size={14} className="text-white" />}
         </div>
         
         {(isWindows || isOffice) && (
-          <div className={`ml-3 ${isWindows ? 'text-blue-600' : 'text-orange-600'}`}>
+          <div className={`ml-3 ${isWindows ? 'text-blue-600 dark:text-blue-400' : 'text-orange-600 dark:text-orange-400'}`}>
             <FaWindows size={20} />
           </div>
         )}
 
         <div className="flex-1 min-w-0">
           <div className="flex items-baseline justify-between">
-            <h3 className={`text-sm font-medium truncate ${isWindows ? 'text-gray-900' : 'text-gray-900'}`}>
+            <h3 className={`text-sm font-medium truncate ${isWindows ? 'text-gray-900 dark:text-gray-100' : 'text-gray-900 dark:text-gray-100'}`}>
               {app.name}
             </h3>
             {app.version && <span className="text-xs text-gray-400 mr-2 font-mono">{app.version}</span>}
           </div>
-          <p className="text-xs text-gray-500 truncate">{app.description}</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{app.description}</p>
           
           {isWindows && (
             <div className="mt-1 flex flex-wrap gap-1 items-center">
@@ -107,20 +116,20 @@ export const AppCard: React.FC<AppCardProps> = ({ app, isSelected, onToggle, onD
                     setSelectedLang(e.target.value);
                   }}
                   onClick={(e) => e.stopPropagation()}
-                  className="text-[10px] bg-white text-gray-600 px-1 py-0.5 rounded border border-gray-300 focus:outline-none focus:border-blue-400"
+                  className="text-[10px] bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-1 py-0.5 rounded border border-gray-300 dark:border-gray-600 focus:outline-none focus:border-blue-400"
                 >
                   <option value="en-US">English (US)</option>
                   <option value="ar-SA">العربية (Arabic)</option>
                   <option value="fr-FR">Français (French)</option>
                 </select>
               ) : (
-                <span className="text-[10px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded border border-gray-200">
+                <span className="text-[10px] bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-1.5 py-0.5 rounded border border-gray-200 dark:border-gray-600">
                   English - US
                 </span>
               )}
               
               {isModernWindows && (
-                <span className="text-[10px] bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded border border-blue-100">
+                <span className="text-[10px] bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-1.5 py-0.5 rounded border border-blue-100 dark:border-blue-800">
                   Media Creation Tool / Portal
                 </span>
               )}
@@ -137,7 +146,9 @@ export const AppCard: React.FC<AppCardProps> = ({ app, isSelected, onToggle, onD
               <button
                 onClick={(e) => handleDirectDownload(e, 'x64')}
                 className={`flex items-center px-2 py-1 text-xs font-medium rounded transition-colors
-                  ${isOffice ? 'text-orange-700 bg-orange-100 hover:bg-orange-200' : 'text-blue-700 bg-blue-100 hover:bg-blue-200'}
+                  ${isOffice 
+                    ? 'text-orange-700 bg-orange-100 hover:bg-orange-200 dark:bg-orange-900/50 dark:text-orange-300 dark:hover:bg-orange-900/70' 
+                    : 'text-blue-700 bg-blue-100 hover:bg-blue-200 dark:bg-blue-900/50 dark:text-blue-300 dark:hover:bg-blue-900/70'}
                 `}
               >
                 <Download size={12} className="ml-1" />
@@ -147,7 +158,7 @@ export const AppCard: React.FC<AppCardProps> = ({ app, isSelected, onToggle, onD
             {hasX86 && (
               <button
                 onClick={(e) => handleDirectDownload(e, 'x86')}
-                className="flex items-center px-2 py-1 text-xs font-medium text-gray-700 bg-gray-100 rounded hover:bg-gray-200 transition-colors"
+                className="flex items-center px-2 py-1 text-xs font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 rounded transition-colors"
               >
                 <Download size={12} className="ml-1" />
                 32-bit

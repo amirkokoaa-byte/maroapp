@@ -21,14 +21,17 @@ export const Clock: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col items-end text-sm text-gray-600 font-medium bg-gray-50 px-3 py-1 rounded-lg border border-gray-200 shadow-sm">
+    <div className="flex flex-col items-end text-sm font-medium px-3 py-1 rounded-lg border shadow-sm transition-colors
+      bg-gray-50 dark:bg-gray-800 
+      border-gray-200 dark:border-gray-700
+      text-gray-600 dark:text-gray-300">
       <div className="flex items-center gap-2">
         <span>{formatDate(time)}</span>
-        <Calendar size={14} className="text-indigo-500" />
+        <Calendar size={14} className="text-indigo-500 dark:text-indigo-400" />
       </div>
       <div className="flex items-center gap-2 mt-0.5">
-        <span className="font-bold text-gray-800" dir="ltr">{formatTime(time)}</span>
-        <ClockIcon size={14} className="text-indigo-500" />
+        <span className="font-bold text-gray-800 dark:text-gray-100" dir="ltr">{formatTime(time)}</span>
+        <ClockIcon size={14} className="text-indigo-500 dark:text-indigo-400" />
       </div>
     </div>
   );
