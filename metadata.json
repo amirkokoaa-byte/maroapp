@@ -1,0 +1,5 @@
+{
+  "name": "QuickInstaller",
+  "description": "A Ninite-inspired web app to select and generate a bulk installer script for multiple applications.",
+  "requestFramePermissions": []
+}
