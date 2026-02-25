@@ -6,11 +6,21 @@ export interface AppData {
   icon?: string; // URL to icon or lucide icon name
   officialDownloadUrl: string;
   downloadUrls?: {
+    // Standard architecture keys for default/single language
     x64?: string;
     x86?: string;
     arm64?: string;
+    // Language-specific overrides
+    languages?: {
+      [langCode: string]: {
+        x64?: string;
+        x86?: string;
+        arm64?: string;
+      };
+    };
   };
   version?: string;
+  sha256?: string;
 }
 
 export type Category = 

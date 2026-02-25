@@ -238,75 +238,129 @@ export const apps: AppData[] = [
 
   // Windows 7
   {
+    id: 'win7_all',
+    name: 'Windows 7 [All Editions]',
+    category: 'Windows 7',
+    description: 'Comprehensive ISO',
+    officialDownloadUrl: 'https://windowstan.com/win/windows7-download/',
+    downloadUrls: {
+      x64: 'https://windowstan.com/win/windows7-download/',
+      x86: 'https://windowstan.com/win/windows7-download/',
+      languages: {
+        'en-US': { x64: 'https://windowstan.com/win/windows7-download/', x86: 'https://windowstan.com/win/windows7-download/' },
+        'ar-SA': { x64: 'https://windowstan.com/win/windows7-download/', x86: 'https://windowstan.com/win/windows7-download/' },
+        'fr-FR': { x64: 'https://windowstan.com/win/windows7-download/', x86: 'https://windowstan.com/win/windows7-download/' }
+      }
+    },
+    version: 'SP1',
+    sha256: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'
+  },
+  {
     id: 'win7_starter',
     name: 'Windows 7 Starter',
     category: 'Windows 7',
     description: 'Starter Edition',
-    officialDownloadUrl: 'https://www.microsoft.com/en-us/software-download/windows7',
+    officialDownloadUrl: 'https://windowstan.com/win/download-windows-7-starter-iso/',
     downloadUrls: {
-      x86: 'https://www.microsoft.com/en-us/software-download/windows7'
+      x86: 'https://windowstan.com/win/download-windows-7-starter-iso/',
+      languages: {
+        'en-US': { x86: 'https://windowstan.com/win/download-windows-7-starter-iso/' },
+        'ar-SA': { x86: 'https://windowstan.com/win/download-windows-7-starter-iso/' },
+        'fr-FR': { x86: 'https://windowstan.com/win/download-windows-7-starter-iso/' }
+      }
     },
-    version: 'SP1'
+    version: 'SP1',
+    sha256: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'
   },
   {
     id: 'win7_home_basic',
     name: 'Windows 7 Home Basic',
     category: 'Windows 7',
     description: 'Home Basic Edition',
-    officialDownloadUrl: 'https://www.microsoft.com/en-us/software-download/windows7',
+    officialDownloadUrl: 'https://windowstan.com/win/download-win-windows-7-home-basic-iso/',
     downloadUrls: {
-      x64: 'https://www.microsoft.com/en-us/software-download/windows7',
-      x86: 'https://www.microsoft.com/en-us/software-download/windows7'
+      x64: 'https://windowstan.com/win/download-win-windows-7-home-basic-iso/',
+      x86: 'https://windowstan.com/win/download-win-windows-7-home-basic-iso/',
+      languages: {
+        'en-US': { x64: 'https://windowstan.com/win/download-win-windows-7-home-basic-iso/', x86: 'https://windowstan.com/win/download-win-windows-7-home-basic-iso/' },
+        'ar-SA': { x64: 'https://windowstan.com/win/download-win-windows-7-home-basic-iso/', x86: 'https://windowstan.com/win/download-win-windows-7-home-basic-iso/' },
+        'fr-FR': { x64: 'https://windowstan.com/win/download-win-windows-7-home-basic-iso/', x86: 'https://windowstan.com/win/download-win-windows-7-home-basic-iso/' }
+      }
     },
-    version: 'SP1'
+    version: 'SP1',
+    sha256: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'
   },
   {
     id: 'win7_home_premium',
     name: 'Windows 7 Home Premium',
     category: 'Windows 7',
     description: 'Home Premium Edition',
-    officialDownloadUrl: 'https://www.microsoft.com/en-us/software-download/windows7',
+    officialDownloadUrl: 'https://windowstan.com/win/download-win-windows-7-home-premium-iso/',
     downloadUrls: {
-      x64: 'https://www.microsoft.com/en-us/software-download/windows7',
-      x86: 'https://www.microsoft.com/en-us/software-download/windows7'
+      x64: 'https://windowstan.com/win/download-win-windows-7-home-premium-iso/',
+      x86: 'https://windowstan.com/win/download-win-windows-7-home-premium-iso/',
+      languages: {
+        'en-US': { x64: 'https://windowstan.com/win/download-win-windows-7-home-premium-iso/', x86: 'https://windowstan.com/win/download-win-windows-7-home-premium-iso/' },
+        'ar-SA': { x64: 'https://windowstan.com/win/download-win-windows-7-home-premium-iso/', x86: 'https://windowstan.com/win/download-win-windows-7-home-premium-iso/' },
+        'fr-FR': { x64: 'https://windowstan.com/win/download-win-windows-7-home-premium-iso/', x86: 'https://windowstan.com/win/download-win-windows-7-home-premium-iso/' }
+      }
     },
-    version: 'SP1'
+    version: 'SP1',
+    sha256: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'
   },
   {
     id: 'win7_professional',
     name: 'Windows 7 Professional',
     category: 'Windows 7',
     description: 'Professional Edition',
-    officialDownloadUrl: 'https://www.microsoft.com/en-us/software-download/windows7',
+    officialDownloadUrl: 'https://windowstan.com/win/windows-7-professional-iso-v1/',
     downloadUrls: {
-      x64: 'https://www.microsoft.com/en-us/software-download/windows7',
-      x86: 'https://www.microsoft.com/en-us/software-download/windows7'
+      x64: 'https://windowstan.com/win/windows-7-professional-iso-v1/',
+      x86: 'https://windowstan.com/win/windows-7-professional-iso-v1/',
+      languages: {
+        'en-US': { x64: 'https://windowstan.com/win/windows-7-professional-iso-v1/', x86: 'https://windowstan.com/win/windows-7-professional-iso-v1/' },
+        'ar-SA': { x64: 'https://windowstan.com/win/windows-7-professional-iso-v1/', x86: 'https://windowstan.com/win/windows-7-professional-iso-v1/' },
+        'fr-FR': { x64: 'https://windowstan.com/win/windows-7-professional-iso-v1/', x86: 'https://windowstan.com/win/windows-7-professional-iso-v1/' }
+      }
     },
-    version: 'SP1'
+    version: 'SP1',
+    sha256: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'
   },
   {
     id: 'win7_enterprise',
     name: 'Windows 7 Enterprise',
     category: 'Windows 7',
     description: 'Enterprise Edition',
-    officialDownloadUrl: 'https://www.microsoft.com/en-us/software-download/windows7',
+    officialDownloadUrl: 'https://windowstan.com/win/download-windows-7-enterprise-iso/',
     downloadUrls: {
-      x64: 'https://www.microsoft.com/en-us/software-download/windows7',
-      x86: 'https://www.microsoft.com/en-us/software-download/windows7'
+      x64: 'https://windowstan.com/win/download-windows-7-enterprise-iso/',
+      x86: 'https://windowstan.com/win/download-windows-7-enterprise-iso/',
+      languages: {
+        'en-US': { x64: 'https://windowstan.com/win/download-windows-7-enterprise-iso/', x86: 'https://windowstan.com/win/download-windows-7-enterprise-iso/' },
+        'ar-SA': { x64: 'https://windowstan.com/win/download-windows-7-enterprise-iso/', x86: 'https://windowstan.com/win/download-windows-7-enterprise-iso/' },
+        'fr-FR': { x64: 'https://windowstan.com/win/download-windows-7-enterprise-iso/', x86: 'https://windowstan.com/win/download-windows-7-enterprise-iso/' }
+      }
     },
-    version: 'SP1'
+    version: 'SP1',
+    sha256: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'
   },
   {
     id: 'win7_ultimate',
     name: 'Windows 7 Ultimate',
     category: 'Windows 7',
     description: 'Ultimate Edition',
-    officialDownloadUrl: 'https://www.microsoft.com/en-us/software-download/windows7',
+    officialDownloadUrl: 'https://windowstan.com/win/windows-7-ultimate-iso-v3/',
     downloadUrls: {
-      x64: 'https://www.microsoft.com/en-us/software-download/windows7',
-      x86: 'https://www.microsoft.com/en-us/software-download/windows7'
+      x64: 'https://windowstan.com/win/windows-7-ultimate-iso-v3/',
+      x86: 'https://windowstan.com/win/windows-7-ultimate-iso-v3/',
+      languages: {
+        'en-US': { x64: 'https://windowstan.com/win/windows-7-ultimate-iso-v3/', x86: 'https://windowstan.com/win/windows-7-ultimate-iso-v3/' },
+        'ar-SA': { x64: 'https://windowstan.com/win/windows-7-ultimate-iso-v3/', x86: 'https://windowstan.com/win/windows-7-ultimate-iso-v3/' },
+        'fr-FR': { x64: 'https://windowstan.com/win/windows-7-ultimate-iso-v3/', x86: 'https://windowstan.com/win/windows-7-ultimate-iso-v3/' }
+      }
     },
-    version: 'SP1'
+    version: 'SP1',
+    sha256: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'
   },
 
   // Windows Vista
@@ -629,6 +683,22 @@ export const apps: AppData[] = [
   },
 
   // Other & Utilities (Updated)
+  {
+    id: 'rufus',
+    name: 'Rufus',
+    category: 'Other & Utilities',
+    description: 'Create bootable USB drives',
+    officialDownloadUrl: 'https://rufus.ie/en/',
+    version: 'Latest'
+  },
+  {
+    id: 'ventoy',
+    name: 'Ventoy',
+    category: 'Other & Utilities',
+    description: 'Bootable USB solution',
+    officialDownloadUrl: 'https://www.ventoy.net/en/download.html',
+    version: 'Latest'
+  },
   {
     id: 'bloxstrap',
     name: 'Bloxstrap',

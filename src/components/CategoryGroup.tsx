@@ -7,6 +7,7 @@ interface CategoryGroupProps {
   apps: AppData[];
   selectedAppIds: Set<string>;
   onToggle: (id: string) => void;
+  onDownload?: (app: AppData) => void;
 }
 
 const categoryTranslations: Record<string, string> = {
@@ -37,7 +38,8 @@ export const CategoryGroup: React.FC<CategoryGroupProps> = ({
   title, 
   apps,
   selectedAppIds,
-  onToggle
+  onToggle,
+  onDownload
 }) => {
   const displayTitle = categoryTranslations[title] || title;
   const isWindows = title.startsWith('Windows');
@@ -69,6 +71,7 @@ export const CategoryGroup: React.FC<CategoryGroupProps> = ({
             app={app}
             isSelected={selectedAppIds.has(app.id)}
             onToggle={onToggle}
+            onDownload={onDownload}
           />
         ))}
       </div>

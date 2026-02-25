@@ -3,13 +3,14 @@ import { apps } from './data/apps';
 import { CategoryGroup } from './components/CategoryGroup';
 import { Clock } from './components/Clock';
 import { AppData } from './types';
-import { Search, Globe, Download, X, AlertTriangle, CheckSquare, Square } from 'lucide-react';
+import { Search, Globe, Download, X, AlertTriangle, CheckSquare, Square, HardDrive } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 export default function App() {
   const [selectedAppIds, setSelectedAppIds] = useState<Set<string>>(new Set());
   const [searchQuery, setSearchQuery] = useState('');
   const [showPopupWarning, setShowPopupWarning] = useState(false);
+  const [showUsbSuggestion, setShowUsbSuggestion] = useState(false);
 
   // Group apps by category
   const groupedApps = useMemo(() => {
@@ -36,9 +37,45 @@ export default function App() {
         next.delete(id);
       } else {
         next.add(id);
+        
+        // Check if the added app is a Windows OS
+        const app = apps.find(a => a.id === id);
+        if (app && (app.category.startsWith('Windows') || app.category === 'Classic Windows')) {
+          checkAndShowUsbSuggestion(next);
+        }
       }
       return next;
     });
+  };
+
+  const checkAndShowUsbSuggestion = (currentSelection: Set<string>) => {
+    // Check if Rufus or Ventoy are already selected
+    const hasRufus = currentSelection.has('rufus');
+    const hasVentoy = currentSelection.has('ventoy');
+
+    if (!hasRufus && !hasVentoy) {
+      setShowUsbSuggestion(true);
+      // Hide after 10 seconds automatically
+      setTimeout(() => setShowUsbSuggestion(false), 10000);
+    }
+  };
+
+  const addRufus = () => {
+    setSelectedAppIds(prev => {
+      const next = new Set(prev);
+      const rufusApp = apps.find(a => a.id === 'rufus');
+      if (rufusApp) {
+        next.add(rufusApp.id);
+      }
+      return next;
+    });
+    setShowUsbSuggestion(false);
+  };
+
+  const handleAppDownload = (app: AppData) => {
+    if (app.category.startsWith('Windows') || app.category === 'Classic Windows') {
+      checkAndShowUsbSuggestion(selectedAppIds);
+    }
   };
 
   const handleDownload = () => {
@@ -90,6 +127,8 @@ export default function App() {
     setSelectedAppIds(new Set(visibleAppIds));
   };
 
+  const [osFilter, setOsFilter] = useState<'All' | 'Client' | 'Server' | 'Legacy'>('All');
+
   // Separate Operating Systems from other categories
   const win11 = groupedApps['Windows 11'];
   const win10 = groupedApps['Windows 10'];
@@ -105,6 +144,72 @@ export default function App() {
     cat !== 'Classic Windows' && 
     cat !== 'Microsoft Office'
   );
+
+  const renderOsSection = () => {
+    const showClient = osFilter === 'All' || osFilter === 'Client';
+    const showServer = osFilter === 'All' || osFilter === 'Server';
+    const showLegacy = osFilter === 'All' || osFilter === 'Legacy';
+
+    const hasOsApps = (win11 || win10 || win81 || win7 || winVista || winServer);
+
+    if (!hasOsApps) return null;
+
+    return (
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-bold text-gray-900 flex items-center">
+            <span className="w-1.5 h-6 rounded-full ml-2 bg-blue-600"></span>
+            أنظمة التشغيل (Operating Systems)
+          </h2>
+          
+          <div className="flex bg-gray-200/80 p-1 rounded-lg">
+            {(['All', 'Client', 'Server', 'Legacy'] as const).map((filter) => (
+              <button
+                key={filter}
+                onClick={() => setOsFilter(filter)}
+                className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${
+                  osFilter === filter 
+                    ? 'bg-white text-blue-700 shadow-sm' 
+                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-300/50'
+                }`}
+              >
+                {filter === 'All' ? 'الكل' : filter}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Legal Disclaimer */}
+        <div className="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-blue-800 flex items-start gap-2">
+          <AlertTriangle className="w-5 h-5 flex-shrink-0 text-blue-600" />
+          <p>
+            <strong>ملاحظة قانونية:</strong> جميع روابط أنظمة التشغيل تعيد التوجيه إلى خوادم مايكروسوفت الرسمية أو أرشيفات موثوقة. الصور الأصلية غير معدلة. يتطلب التثبيت والتنشيط مفتاح منتج صالح.
+          </p>
+        </div>
+
+        {showClient && win11 && win11.length > 0 && (
+          <CategoryGroup title="Windows 11" apps={win11} selectedAppIds={selectedAppIds} onToggle={toggleApp} onDownload={handleAppDownload} />
+        )}
+        {showClient && win10 && win10.length > 0 && (
+          <CategoryGroup title="Windows 10" apps={win10} selectedAppIds={selectedAppIds} onToggle={toggleApp} onDownload={handleAppDownload} />
+        )}
+        {showClient && win7 && win7.length > 0 && (
+          <CategoryGroup title="Windows 7" apps={win7} selectedAppIds={selectedAppIds} onToggle={toggleApp} onDownload={handleAppDownload} />
+        )}
+        
+        {showLegacy && win81 && win81.length > 0 && (
+          <CategoryGroup title="Windows 8.1" apps={win81} selectedAppIds={selectedAppIds} onToggle={toggleApp} onDownload={handleAppDownload} />
+        )}
+        {showLegacy && winVista && winVista.length > 0 && (
+          <CategoryGroup title="Windows Vista" apps={winVista} selectedAppIds={selectedAppIds} onToggle={toggleApp} onDownload={handleAppDownload} />
+        )}
+        
+        {showServer && winServer && winServer.length > 0 && (
+          <CategoryGroup title="Windows Server" apps={winServer} selectedAppIds={selectedAppIds} onToggle={toggleApp} onDownload={handleAppDownload} />
+        )}
+      </div>
+    );
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 font-sans text-gray-900" dir="rtl">
@@ -131,6 +236,38 @@ export default function App() {
                 className="mr-auto text-amber-500 hover:text-amber-700"
               >
                 <X size={18} />
+              </button>
+            </div>
+          </motion.div>
+        )}
+
+        {/* USB Suggestion Toast */}
+        {showUsbSuggestion && (
+          <motion.div
+            initial={{ y: 100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 100, opacity: 0 }}
+            className="fixed bottom-24 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-md px-4"
+          >
+            <div className="bg-white border border-blue-200 p-4 rounded-lg shadow-xl flex items-center gap-3">
+              <div className="bg-blue-100 p-2 rounded-full text-blue-600">
+                <HardDrive size={24} />
+              </div>
+              <div className="flex-1">
+                <h4 className="text-sm font-bold text-gray-900">إنشاء قرص إقلاع USB؟</h4>
+                <p className="text-xs text-gray-600">نوصي بإضافة Rufus أو Ventoy إلى قائمة التحميل.</p>
+              </div>
+              <button 
+                onClick={addRufus}
+                className="bg-blue-600 text-white text-xs px-3 py-1.5 rounded hover:bg-blue-700 transition-colors whitespace-nowrap"
+              >
+                إضافة Rufus
+              </button>
+              <button 
+                onClick={() => setShowUsbSuggestion(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <X size={16} />
               </button>
             </div>
           </motion.div>
@@ -199,37 +336,8 @@ export default function App() {
           </p>
         </div>
 
-        {/* Windows Versions Sections */}
-        {win11 && win11.length > 0 && (
-          <div className="mb-8">
-            <CategoryGroup title="Windows 11" apps={win11} selectedAppIds={selectedAppIds} onToggle={toggleApp} />
-          </div>
-        )}
-        {win10 && win10.length > 0 && (
-          <div className="mb-8">
-            <CategoryGroup title="Windows 10" apps={win10} selectedAppIds={selectedAppIds} onToggle={toggleApp} />
-          </div>
-        )}
-        {win81 && win81.length > 0 && (
-          <div className="mb-8">
-            <CategoryGroup title="Windows 8.1" apps={win81} selectedAppIds={selectedAppIds} onToggle={toggleApp} />
-          </div>
-        )}
-        {win7 && win7.length > 0 && (
-          <div className="mb-8">
-            <CategoryGroup title="Windows 7" apps={win7} selectedAppIds={selectedAppIds} onToggle={toggleApp} />
-          </div>
-        )}
-        {winVista && winVista.length > 0 && (
-          <div className="mb-8">
-            <CategoryGroup title="Windows Vista" apps={winVista} selectedAppIds={selectedAppIds} onToggle={toggleApp} />
-          </div>
-        )}
-        {winServer && winServer.length > 0 && (
-          <div className="mb-8">
-            <CategoryGroup title="Windows Server" apps={winServer} selectedAppIds={selectedAppIds} onToggle={toggleApp} />
-          </div>
-        )}
+        {/* Windows Versions Sections with Tabs */}
+        {renderOsSection()}
 
         {/* Microsoft Office Section (Full Width) */}
         {officeCategory && officeCategory.length > 0 && (
@@ -239,6 +347,7 @@ export default function App() {
               apps={officeCategory}
               selectedAppIds={selectedAppIds}
               onToggle={toggleApp}
+              onDownload={handleAppDownload}
             />
           </div>
         )}
@@ -251,6 +360,7 @@ export default function App() {
               apps={classicOsCategory}
               selectedAppIds={selectedAppIds}
               onToggle={toggleApp}
+              onDownload={handleAppDownload}
             />
           </div>
         )}
@@ -264,6 +374,7 @@ export default function App() {
               apps={categoryApps}
               selectedAppIds={selectedAppIds}
               onToggle={toggleApp}
+              onDownload={handleAppDownload}
             />
           ))}
         </div>
